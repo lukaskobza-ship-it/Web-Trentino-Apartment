@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apartmán Stenico – Trentino, Itálie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0f1f3d;
+      --deep: #162540;
+      --mid: #1e3a5f;
+      --ice: #d6e8f7;
+      --snow: #f0f6fc;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --white: #ffffff;
+      --text: #1a2b40;
+      --muted: #5a7490;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Raleway', sans-serif;
+      background: var(--snow);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 1.2rem 3rem;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(15,31,61,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,168,76,0.3);
+      transition: all 0.3s;
+    }
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      color: var(--gold);
+      font-size: 1.3rem;
+      letter-spacing: 0.05em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--ice);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      background:
+        linear-gradient(to bottom, rgba(10,20,40,0.55) 0%, rgba(10,20,40,0.2) 60%, rgba(10,20,40,0.7) 100%),
+        url('https://images.unsplash.com/photo-1516912481808-3406841bd33c?w=1800&q=80') center/cover no-repeat;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      position: relative;
+    }
+    .hero-tag {
+      display: inline-block;
+      color: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 0.4rem 1.2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+    #hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      color: var(--white);
+      line-height: 1.1;
+      max-width: 800px;
+      animation: fadeUp 0.9s 0.1s ease both;
+    }
+    #hero h1 em { color: var(--gold-light); font-style: italic; }
+    .hero-sub {
+      color: var(--ice);
+      font-size: 1.1rem;
+      font-weight: 300;
+      margin-top: 1.2rem;
+      letter-spacing: 0.05em;
+      animation: fadeUp 1s 0.2s ease both;
+    }
+    .hero-cta {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 1s 0.35s ease both;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 0.85rem 2.2rem;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      padding: 0.85rem 2.2rem;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 500;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.5);
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-scroll {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.5);
+      font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      animation: bounce 2s infinite;
+    }
+    .hero-scroll::after {
+      content: '';
+      width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(201,168,76,0.8), transparent);
+    }
+
+    /* ─── SECTION COMMONS ─── */
+    section { padding: 6rem 2rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+    }
+    .section-title em { color: var(--mid); font-style: italic; }
+    .divider {
+      width: 50px; height: 2px;
+      background: var(--gold);
+      margin-bottom: 2rem;
+    }
+
+    /* ─── ABOUT ─── */
+    #about { background: var(--white); }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    .about-text p {
+      color: var(--muted); line-height: 1.9; font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .about-features {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;
+    }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 0.75rem;
+    }
+    .feature-icon {
+      font-size: 1.4rem; margin-top: 0.1rem;
+    }
+    .feature-item h4 { font-size: 0.85rem; font-weight: 600; color: var(--navy); }
+    .feature-item p { font-size: 0.8rem; color: var(--muted); }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-img-wrap img {
+      width: 100%; height: 460px; object-fit: cover;
+      display: block;
+    }
+    .about-img-badge {
+      position: absolute; bottom: -1.5rem; left: -1.5rem;
+      background: var(--navy);
+      color: var(--gold);
+      padding: 1.5rem;
+      font-family: 'Playfair Display', serif;
+      text-align: center;
+    }
+    .about-img-badge .num { font-size: 2.5rem; font-weight: 700; display: block; }
+    .about-img-badge .label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+
+    /* ─── GALLERY ─── */
+    #galerie { background: var(--navy); }
+    #galerie .section-title { color: var(--white); }
+    #galerie .section-label { color: var(--gold); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: 220px 220px;
+      gap: 0.5rem;
+    }
+    .gallery-item {
+      overflow: hidden; position: relative; cursor: pointer;
+    }
+    .gallery-item:first-child { grid-row: 1 / 3; }
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.05); }
+    .gallery-item::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(15,31,61,0);
+      transition: background 0.3s;
+    }
+    .gallery-item:hover::after { background: rgba(15,31,61,0.25); }
+
+    /* ─── OKOLÍ ─── */
+    #okoli { background: var(--snow); }
+    .around-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem;
+    }
+    .around-card {
+      background: var(--white);
+      padding: 2rem 1.8rem;
+      border-top: 3px solid var(--gold);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .around-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(15,31,61,0.1); }
+    .around-card .icon { font-size: 2rem; margin-bottom: 1rem; }
+    .around-card h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--navy); margin-bottom: 0.5rem; }
+    .around-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+    .around-card .distance {
+      margin-top: 1rem; font-size: 0.75rem; font-weight: 600;
+      color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ─── CENÍK ─── */
+    #cenik { background: var(--mid); }
+    #cenik .section-title { color: var(--white); }
+    #cenik .section-label { color: var(--gold); }
+    #cenik .divider { background: var(--gold); }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem;
+    }
+    .price-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(201,168,76,0.2);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      position: relative;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .price-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+    .price-card.featured {
+      background: rgba(201,168,76,0.12);
+      border-color: var(--gold);
+    }
+    .price-card.featured::before {
+      content: 'Nejoblíbenější';
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: var(--gold); color: var(--navy);
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 0.25rem 1rem;
+    }
+    .price-season { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+    .price-amount { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--white); }
+    .price-amount span { font-size: 1rem; font-weight: 300; color: var(--ice); }
+    .price-desc { font-size: 0.82rem; color: var(--ice); margin: 1.2rem 0; line-height: 1.7; }
+    .price-list { list-style: none; text-align: left; }
+    .price-list li { font-size: 0.82rem; color: var(--ice); padding: 0.4rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .price-list li::before { content: '✓ '; color: var(--gold); font-weight: 700; }
+
+    /* ─── CALENDAR ─── */
+    .calendar-wrap { margin-top: 4rem; }
+    .calendar-wrap h3 {
+      font-family: 'Playfair Display', serif; color: var(--white);
+      font-size: 1.6rem; margin-bottom: 2rem; text-align: center;
+    }
+    .cal-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+    }
+    .cal-month {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 1.2rem;
+    }
+    .cal-month-name {
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.8rem;
+    }
+    .cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; color: var(--ice); border-radius: 2px;
+    }
+    .cal-day.booked { background: rgba(201,168,76,0.35); color: var(--gold); }
+    .cal-day.free { background: rgba(100,200,100,0.15); color: #8dd08d; }
+    .cal-day.header { color: var(--muted); font-weight: 600; }
+    .cal-legend {
+      display: flex; gap: 2rem; justify-content: center; margin-top: 1.5rem;
+      font-size: 0.78rem; color: var(--ice);
+    }
+    .cal-legend span { display: flex; align-items: center; gap: 0.5rem; }
+    .dot { width: 10px; height: 10px; border-radius: 2px; }
+    .dot-free { background: rgba(100,200,100,0.5); }
+    .dot-booked { background: rgba(201,168,76,0.5); }
+
+    /* ─── KONTAKT ─── */
+    #kontakt { background: var(--white); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; }
+    .contact-info h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--navy); margin-bottom: 1.5rem; }
+    .contact-detail {
+      display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem;
+    }
+    .contact-detail .icon { font-size: 1.3rem; }
+    .contact-detail h4 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); }
+    .contact-detail p { font-size: 0.9rem; color: var(--muted); }
+
+    /* Form */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    label {
+      display: block; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--mid); margin-bottom: 0.4rem;
+    }
+    input, select, textarea {
+      width: 100%; padding: 0.85rem 1rem;
+      border: 1px solid #dde6f0;
+      background: var(--snow);
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.9rem; color: var(--text);
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); background: #fff; }
+    textarea { resize: vertical; min-height: 120px; }
+    .form-submit {
+      width: 100%;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      padding: 1rem;
+      font-family: 'Raleway', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      cursor: pointer; margin-top: 0.5rem;
+      transition: background 0.3s;
+      position: relative;
+    }
+    .form-submit:hover { background: var(--mid); }
+    .form-submit::after { content: ' →'; }
+    .success-msg {
+      display: none;
+      background: #e8f5e9; border: 1px solid #a5d6a7;
+      color: #2e7d32; padding: 1rem; margin-top: 1rem;
+      font-size: 0.9rem; text-align: center;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--navy);
+      padding: 3rem 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(201,168,76,0.3);
+    }
+    footer .logo { font-family: 'Playfair Display', serif; color: var(--gold); font-size: 1.4rem; margin-bottom: 0.5rem; }
+    footer p { color: var(--muted); font-size: 0.82rem; }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .about-grid, .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .around-grid, .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+      .gallery-item:first-child { grid-row: auto; }
+      .cal-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { gap: 1.2rem; }
+    }
+    @media (max-width: 600px) {
+      .around-grid, .pricing-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .cal-grid { grid-template-columns: 1fr 1fr; }
+      nav { padding: 1rem; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Apartmán Stenico</div>
+  <ul class="nav-links">
+    <li><a href="#about">O apartmánu</a></li>
+    <li><a href="#galerie">Galerie</a></li>
+    <li><a href="#okoli">Okolí</a></li>
+    <li><a href="#cenik">Ceník</a></li>
+    <li><a href="#kontakt">Kontakt</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag">Trentino · Itálie</div>
+  <h1>Váš horský ráj<br>v <em>srdci Trentina</em></h1>
+  <p class="hero-sub">Stenico · Jezero Garda · Lyžařská střediska Dolomit</p>
+  <div class="hero-cta">
+    <a href="#kontakt" class="btn-primary">Rezervovat pobyt</a>
+    <a href="#galerie" class="btn-outline">Prohlédnout galerii</a>
+  </div>
+  <div class="hero-scroll">Posunout dolů</div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p class="section-label">O apartmánu</p>
+        <h2 class="section-title">Útulný horský<br><em>apartmán pro vás</em></h2>
+        <div class="divider"></div>
+        <p>Vítejte v našem apartmánu v malebném Stenico, zasazeném do srdce italského Trentina. Obklopeni majestátními Dolomity a smaragdovými horskými jezery, nabízíme ideální základnu pro lyžaře, turisty i milovníky přírody.</p>
+        <p>Apartmán je plně vybaven a pojme pohodlně 4–6 osob. Panoramatický výhled na hory z terasy je nezapomenutelným zážitkem v každém ročním období.</p>
+        <div class="about-features">
+          <div class="feature-item">
+            <span class="feature-icon">🛏</span>
+            <div><h4>2 ložnice</h4><p>Pro 4–6 osob</p></div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🏔</span>
+            <div><h4>Výhled na hory</h4><p>Terasa s panoramatem</p></div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🎿</span>
+            <div><h4>Ski in/out</h4><p>5 min na sjezdovky</p></div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔥</span>
+            <div><h4>Krb & sauna</h4><p>Ideální po lyžování</p></div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🚗</span>
+            <div><h4>Parkování</h4><p>Vlastní garáž</p></div>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">📶</span>
+            <div><h4>Wi-Fi zdarma</h4><p>Vysokorychlostní</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="about-img-wrap reveal">
+        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" alt="Apartmán interiér" />
+        <div class="about-img-badge">
+          <span class="num">★4.9</span>
+          <span class="label">Hodnocení hostů</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALERIE -->
+<section id="galerie">
+  <div class="container">
+    <p class="section-label">Fotografie</p>
+    <h2 class="section-title" style="color:var(--white)">Galerie <em style="color:var(--gold-light)">apartmánu</em></h2>
+    <div class="divider" style="background:var(--gold)"></div>
+    <div class="gallery-grid reveal">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1519974719765-e6559eac2575?w=800&q=80" alt="Výhled na hory" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1600210492493-0946911123ea?w=600&q=80" alt="Obývací pokoj" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80" alt="Ložnice" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" alt="Zimní krajina" />
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&q=80" alt="Lyžování" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OKOLÍ -->
+<section id="okoli">
+  <div class="container">
+    <p class="section-label">Co navštívit</p>
+    <h2 class="section-title">Poznávejte <em>krásy okolí</em></h2>
+    <div class="divider"></div>
+    <div class="around-grid">
+      <div class="around-card reveal">
+        <div class="icon">⛷</div>
+        <h3>Lyžařská střediska</h3>
+        <p>Andalo, Fai della Paganella a Madonna di Campiglio — jedny z nejlepších sjezdovek v celé Itálii. Perfektní sníh od prosince do března.</p>
+        <p class="distance">5–30 min autem</p>
+      </div>
+      <div class="around-card reveal">
+        <div class="icon">🏰</div>
+        <h3>Hrad Stenico</h3>
+        <p>Středověký hrad přímo v obci, jeden z nejlépe zachovaných hradů celého Trentina. Fascinující prohlídky s výhledem na údolí.</p>
+        <p class="distance">2 min pěšky</p>
+      </div>
+      <div class="around-card reveal">
+        <div class="icon">💧</div>
+        <h3>Jezero Garda</h3>
+        <p>Největší italské jezero s tyrkysovou vodou, olivovými háji a malebným pobřežím. Ideální výlet na celý den v létě i na podzim.</p>
+        <p class="distance">40 min autem</p>
+      </div>
+      <div class="around-card reveal">
+        <div class="icon">🥾</div>
+        <h3>Turistické stezky</h3>
+        <p>Stovky kilometrů značených tras napříč Dolomity. Od klidných procházek pro rodiny až po náročné výstupy pro zkušené turisty.</p>
+        <p class="distance">Přímo od apartmánu</p>
+      </div>
+      <div class="around-card reveal">
+        <div class="icon">🍷</div>
+        <h3>Gastronomie & víno</h3>
+        <p>Trentino je proslulé vynikající kuchyní — canederli, polenta, trůfle a místní vína Teroldego či Marzemino. Vychutnejte si italský životní styl.</p>
+        <p class="distance">Místní restaurace</p>
+      </div>
+      <div class="around-card reveal">
+        <div class="icon">🌄</div>
+        <h3>Parco Adamello Brenta</h3>
+        <p>Národní park s ledovci, horskými jezery a bohatou faunou včetně medvědů hnědých. Nezapomenutelná příroda přímo za humny.</p>
+        <p class="distance">15 min autem</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CENÍK -->
+<section id="cenik">
+  <div class="container">
+    <p class="section-label">Rezervace & ceny</p>
+    <h2 class="section-title">Ceník <em style="color:var(--gold-light)">a dostupnost</em></h2>
+    <div class="divider"></div>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card">
+        <p class="price-season">Jaro / Podzim</p>
+        <div class="price-amount">80 <span>€/noc</span></div>
+        <p class="price-desc">Ideální pro turistiku, pěší výlety a klid v přírodě.</p>
+        <ul class="price-list">
+          <li>Min. pobyt 3 noci</li>
+          <li>Až 6 osob</li>
+          <li>Ložní prádlo v ceně</li>
+          <li>Úklidový poplatek 50 €</li>
+        </ul>
+      </div>
+      <div class="price-card featured">
+        <p class="price-season">Zimní sezóna</p>
+        <div class="price-amount">130 <span>€/noc</span></div>
+        <p class="price-desc">Lyžařská sezóna – prosinec až březen. Sníh zaručen.</p>
+        <ul class="price-list">
+          <li>Min. pobyt 5 nocí</li>
+          <li>Až 6 osob</li>
+          <li>Ložní prádlo v ceně</li>
+          <li>Bezplatné parkování</li>
+        </ul>
+      </div>
+      <div class="price-card">
+        <p class="price-season">Léto</p>
+        <div class="price-amount">95 <span>€/noc</span></div>
+        <p class="price-desc">Léto v horách – turistika, cyklistika, jezero Garda.</p>
+        <ul class="price-list">
+          <li>Min. pobyt 4 noci</li>
+          <li>Až 6 osob</li>
+          <li>Ložní prádlo v ceně</li>
+          <li>Terasa s grilem</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="calendar-wrap reveal">
+      <h3>Dostupnost 2025</h3>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span><span class="dot dot-free"></span> Volno</span>
+        <span><span class="dot dot-booked"></span> Obsazeno</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="kontakt">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <p class="section-label">Kontakt</p>
+        <h2 class="section-title">Napište <em>nám</em></h2>
+        <div class="divider"></div>
+        <h3>Rádi vám odpovíme</h3>
+        <div class="contact-detail">
+          <span class="icon">📍</span>
+          <div>
+            <h4>Adresa</h4>
+            <p>Via Stenico 12<br>38070 Stenico (TN), Itálie</p>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <span class="icon">📞</span>
+          <div>
+            <h4>Telefon / WhatsApp</h4>
+            <p>+39 345 000 0000</p>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <span class="icon">✉️</span>
+          <div>
+            <h4>E-mail</h4>
+            <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9bf2f5fdf4dbfaebfae9eff6faf5b6e8effef5f2f8f4b5f2ef">[email&#160;protected]</a></p>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <span class="icon">🕐</span>
+          <div>
+            <h4>Odpovídáme do</h4>
+            <p>24 hodin</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <form id="contactForm" onsubmit="submitForm(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="jmeno">Jméno a příjmení</label>
+              <input type="text" id="jmeno" placeholder="Jan Novák" required />
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" placeholder="jan@email.cz" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="telefon">Telefon</label>
+              <input type="tel" id="telefon" placeholder="+420 000 000 000" />
+            </div>
+            <div class="form-group">
+              <label for="osoby">Počet osob</label>
+              <select id="osoby">
+                <option>2 osoby</option>
+                <option>3 osoby</option>
+                <option>4 osoby</option>
+                <option>5 osob</option>
+                <option>6 osob</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="od">Příjezd</label>
+              <input type="date" id="od" required />
+            </div>
+            <div class="form-group">
+              <label for="do">Odjezd</label>
+              <input type="date" id="do" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="zprava">Zpráva</label>
+            <textarea id="zprava" placeholder="Máte dotazy? Napište nám..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Odeslat poptávku</button>
+          <div class="success-msg" id="successMsg">
+            ✓ Děkujeme! Vaši poptávku jsme přijali. Ozveme se vám do 24 hodin.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Apartmán Stenico</div>
+  <p style="margin-top:0.5rem">Stenico, Trentino · Itálie</p>
+  <p style="margin-top:1rem; font-size:0.75rem; opacity:0.5">© 2025 Apartmán Stenico. Všechna práva vyhrazena.</p>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // ── Reveal on scroll ──
+  const reveals = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => obs.observe(r));
+
+  // ── Calendar generation ──
+  const months = [
+    { name: 'Leden', days: 31, booked: [3,4,5,6,7,10,11,12,13,14,17,18,24,25,26,27,28] },
+    { name: 'Únor', days: 28, booked: [1,2,7,8,9,10,14,15,16,21,22,23] },
+    { name: 'Březen', days: 31, booked: [1,2,8,9,15,16,22,23] },
+    { name: 'Duben', days: 30, booked: [5,6,12,13,19,20,26,27] },
+    { name: 'Květen', days: 31, booked: [3,4,10,11,17,18] },
+    { name: 'Červen', days: 30, booked: [7,8,14,15,21,22,28,29] },
+    { name: 'Červenec', days: 31, booked: [1,2,3,4,5,6,7,12,13,14,19,20,21,26,27,28] },
+    { name: 'Srpen', days: 31, booked: [2,3,4,5,6,9,10,11,12,13,16,17,18,23,24,30,31] },
+    { name: 'Září', days: 30, booked: [6,7,13,14,20,21] },
+    { name: 'Říjen', days: 31, booked: [4,5,11,12,18,19,25,26] },
+    { name: 'Listopad', days: 30, booked: [1,2,8,9,15,16,22,23,29,30] },
+    { name: 'Prosinec', days: 31, booked: [6,7,13,14,20,21,22,23,24,25,26,27,28,29,30,31] },
+  ];
+  const dayNames = ['Po','Út','St','Čt','Pá','So','Ne'];
+  const grid = document.getElementById('calGrid');
+  months.forEach(m => {
+    const wrap = document.createElement('div');
+    wrap.className = 'cal-month';
+    wrap.innerHTML = `<div class="cal-month-name">${m.name}</div><div class="cal-days"></div>`;
+    const daysEl = wrap.querySelector('.cal-days');
+    dayNames.forEach(d => {
+      const h = document.createElement('div');
+      h.className = 'cal-day header'; h.textContent = d;
+      daysEl.appendChild(h);
+    });
+    for (let i = 1; i <= m.days; i++) {
+      const d = document.createElement('div');
+      d.className = 'cal-day ' + (m.booked.includes(i) ? 'booked' : 'free');
+      d.textContent = i;
+      daysEl.appendChild(d);
+    }
+    grid.appendChild(wrap);
+  });
+
+  // ── Backend URL ──
+  const API = 'https://web-production-5a5e.up.railway.app';
+
+  // ── Kalendář – načtení z backendu ──
+  async function buildCalendar() {
+    let obsazeno = [];
+    try {
+      const res = await fetch(`${API}/api/dostupnost`);
+      const data = await res.json();
+      obsazeno = data.obsazeno || [];
+    } catch (e) {
+      console.warn('Kalendář: backend nedostupný, používám statická data.');
+    }
+
+    const year = new Date().getFullYear();
+    const monthNames = ['Leden','Únor','Březen','Duben','Květen','Červen',
+                        'Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
+    const dayNames = ['Po','Út','St','Čt','Pá','So','Ne'];
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+
+    for (let m = 0; m < 12; m++) {
+      const daysInMonth = new Date(year, m + 1, 0).getDate();
+      const wrap = document.createElement('div');
+      wrap.className = 'cal-month';
+      wrap.innerHTML = `<div class="cal-month-name">${monthNames[m]}</div><div class="cal-days"></div>`;
+      const daysEl = wrap.querySelector('.cal-days');
+
+      dayNames.forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'cal-day header'; h.textContent = d;
+        daysEl.appendChild(h);
+      });
+
+      // Prázdné buňky před 1. dnem (pondělí = 0)
+      const firstDay = (new Date(year, m, 1).getDay() + 6) % 7;
+      for (let i = 0; i < firstDay; i++) {
+        const empty = document.createElement('div');
+        empty.className = 'cal-day';
+        daysEl.appendChild(empty);
+      }
+
+      for (let i = 1; i <= daysInMonth; i++) {
+        const dateStr = `${year}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+        const d = document.createElement('div');
+        const isPast = new Date(year, m, i) < new Date().setHours(0,0,0,0);
+        d.className = 'cal-day ' + (isPast ? 'booked' : obsazeno.includes(dateStr) ? 'booked' : 'free');
+        d.textContent = i;
+        daysEl.appendChild(d);
+      }
+      grid.appendChild(wrap);
+    }
+  }
+  buildCalendar();
+
+  // ── Form submit – napojeno na Railway backend ──
+  async function submitForm(e) {
+    e.preventDefault();
+    const btn = document.querySelector('.form-submit');
+    btn.textContent = 'Odesílám...';
+    btn.disabled = true;
+
+    const osobyRaw = document.getElementById('osoby').value;
+    const osobyNum = parseInt(osobyRaw) || 2;
+
+    const payload = {
+      jmeno:    document.getElementById('jmeno').value,
+      email:    document.getElementById('email').value,
+      telefon:  document.getElementById('telefon').value,
+      osoby:    osobyNum,
+      datum_od: document.getElementById('od').value,
+      datum_do: document.getElementById('do').value,
+      zprava:   document.getElementById('zprava').value,
+    };
+
+    try {
+      const res = await fetch(`${API}/api/poptavka`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById('successMsg').style.display = 'block';
+        document.getElementById('contactForm').reset();
+        buildCalendar(); // obnov kalendář
+      } else {
+        alert('Chyba: ' + (data.detail || 'Něco se pokazilo.'));
+      }
+    } catch (err) {
+      alert('Server není dostupný. Zkuste to prosím znovu.');
+    } finally {
+      btn.textContent = 'Odeslat poptávku';
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
