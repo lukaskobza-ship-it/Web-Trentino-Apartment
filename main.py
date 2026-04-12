@@ -23,7 +23,7 @@ from email.mime.multipart import MIMEMultipart
 # CONFIG – upravte dle vašeho nastavení
 # ──────────────────────────────────────────────
 SMTP_HOST     = "smtp.gmail.com"
-SMTP_PORT     = 587
+SMTP_PORT     = 465
 SMTP_USER     = "dkonly456@gmail.com"
 SMTP_PASSWORD = "hbvn rglj bycf omtg"
 NOTIFY_EMAIL  = "lukas.kobza@icloud.com"
@@ -129,7 +129,7 @@ async def send_email(to: str, subject: str, html_body: str):
             msg,
             hostname=SMTP_HOST,
             port=SMTP_PORT,
-            start_tls=True,
+            use_tls=True,
             username=SMTP_USER,
             password=SMTP_PASSWORD,
         )
