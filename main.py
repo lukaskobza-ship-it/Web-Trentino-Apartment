@@ -15,18 +15,14 @@ from pydantic import BaseModel, EmailStr
 from datetime import date, datetime
 from typing import Optional, List
 import sqlite3, hashlib, os, asyncio, json
-import aiosmtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import httpx
 
 # ──────────────────────────────────────────────
 # CONFIG – upravte dle vašeho nastavení
 # ──────────────────────────────────────────────
-SMTP_HOST     = "smtp.gmail.com"
-SMTP_PORT     = 465
-SMTP_USER     = "dkonly456@gmail.com"
-SMTP_PASSWORD = "hbvn rglj bycf omtg"
-NOTIFY_EMAIL  = "lukas.kobza@icloud.com"
+RESEND_API_KEY = "re_KevCb3U8_7Ag18mq2d6VNWNHfxA9e5jGG"
+FROM_EMAIL     = "onboarding@resend.dev"
+NOTIFY_EMAIL   = "lukas.kobza@icloud.com"
 ADMIN_PASSWORD = hashlib.sha256(b"Anastazie0329").hexdigest()
 SECRET_TOKEN  = "stenico-secret-2025"
 
@@ -118,23 +114,26 @@ class StavUpdate(BaseModel):
 # EMAIL HELPER
 # ──────────────────────────────────────────────
 async def send_email(to: str, subject: str, html_body: str):
-    """Odešle e-mail přes Gmail SMTP."""
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"]    = SMTP_USER
-    msg["To"]      = to
-    msg.attach(MIMEText(html_body, "html", "utf-8"))
+    """Odešle e-mail přes Resend API."""
     try:
-        await aiosmtplib.send(
-            msg,
-            hostname=SMTP_HOST,
-            port=SMTP_PORT,
-            use_tls=True,
-            username=SMTP_USER,
-            password=SMTP_PASSWORD,
-        )
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {RESEND_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "from": FROM_EMAIL,
+                    "to": [to],
+                    "subject": subject,
+                    "html": html_body,
+                },
+            )
+            if response.status_code != 200:
+                print(f"[EMAIL ERROR] {response.text}")
     except Exception as e:
-        print(f"[EMAIL ERROR] {e}")  # Logujeme, ale nepadáme
+        print(f"[EMAIL ERROR] {e}")
 
 def email_host_html(r: dict) -> str:
     return f"""
