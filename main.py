@@ -24,10 +24,10 @@ from email.mime.multipart import MIMEMultipart
 # ──────────────────────────────────────────────
 SMTP_HOST     = "smtp.gmail.com"
 SMTP_PORT     = 587
-SMTP_USER     = "vas-email@gmail.com"          # ← váš Gmail
-SMTP_PASSWORD = "xxxx xxxx xxxx xxxx"          # ← App Password (ne heslo k účtu!)
-NOTIFY_EMAIL  = "vlastnik@email.cz"            # ← kam chodit notifikace
-ADMIN_PASSWORD = hashlib.sha256(b"admin123").hexdigest()  # ← změňte heslo!
+SMTP_USER     = "dkonly456@gmail.com"          # ← váš Gmail
+SMTP_PASSWORD = "hbvn rglj bycf omtg"          # ← App Password (ne heslo k účtu!)
+NOTIFY_EMAIL  = "lukas.kobza@icloud.com"            # ← kam chodit notifikace
+ADMIN_PASSWORD = hashlib.sha256(b"Anastazie0329").hexdigest()  # ← změňte heslo!
 SECRET_TOKEN  = "stenico-secret-2025"          # ← tajný token pro admin session
 
 DB_PATH = "stenico.db"
