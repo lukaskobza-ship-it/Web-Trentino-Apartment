@@ -24,11 +24,11 @@ from email.mime.multipart import MIMEMultipart
 # ──────────────────────────────────────────────
 SMTP_HOST     = "smtp.gmail.com"
 SMTP_PORT     = 587
-SMTP_USER     = "dkonly456@gmail.com"          # ← váš Gmail
-SMTP_PASSWORD = "hbvn rglj bycf omtg"          # ← App Password (ne heslo k účtu!)
-NOTIFY_EMAIL  = "lukas.kobza@icloud.com"            # ← kam chodit notifikace
-ADMIN_PASSWORD = hashlib.sha256(b"Anastazie0329").hexdigest()  # ← změňte heslo!
-SECRET_TOKEN  = "stenico-secret-2025"          # ← tajný token pro admin session
+SMTP_USER     = "dkonly456@gmail.com"
+SMTP_PASSWORD = "hbvn rglj bycf omtg"
+NOTIFY_EMAIL  = "lukas.kobza@icloud.com"
+ADMIN_PASSWORD = hashlib.sha256(b"Anastazie0329").hexdigest()
+SECRET_TOKEN  = "stenico-secret-2025"
 
 DB_PATH = "stenico.db"
 
@@ -51,7 +51,7 @@ templates = Jinja2Templates(directory="templates")
 # DATABASE
 # ──────────────────────────────────────────────
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     try:
         yield conn
