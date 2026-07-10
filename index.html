@@ -386,12 +386,19 @@
       position: relative;
     }
     .form-submit:hover { background: var(--mid); }
+    .form-submit:disabled { background: #9aa8ba; cursor: not-allowed; }
     .form-submit::after { content: ' →'; }
     .success-msg {
       display: none;
       background: #e8f5e9; border: 1px solid #a5d6a7;
       color: #2e7d32; padding: 1rem; margin-top: 1rem;
       font-size: 0.9rem; text-align: center;
+    }
+    .termin-warning {
+      display: none;
+      background: #fff4e5; border: 1px solid #ffcc80;
+      color: #b26a00; padding: 0.9rem 1rem; margin-top: 1rem;
+      font-size: 0.88rem; text-align: center;
     }
 
     /* ─── FOOTER ─── */
@@ -633,7 +640,7 @@
 
     <!-- CALENDAR -->
     <div class="calendar-wrap reveal">
-      <h3>Dostupnost 2025</h3>
+      <h3>Dostupnost <span id="calYear"></span></h3>
       <div class="cal-grid" id="calGrid"></div>
       <div class="cal-legend">
         <span><span class="dot dot-free"></span> Volno</span>
@@ -670,7 +677,7 @@
           <span class="icon">✉️</span>
           <div>
             <h4>E-mail</h4>
-            <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9bf2f5fdf4dbfaebfae9eff6faf5b6e8effef5f2f8f4b5f2ef">[email&#160;protected]</a></p>
+            <p>stenico@apartms.eu</p>
           </div>
         </div>
         <div class="contact-detail">
@@ -725,6 +732,7 @@
             <textarea id="zprava" placeholder="Máte dotazy? Napište nám..."></textarea>
           </div>
           <button type="submit" class="form-submit">Odeslat poptávku</button>
+          <div class="termin-warning" id="terminWarning"></div>
           <div class="success-msg" id="successMsg">
             ✓ Děkujeme! Vaši poptávku jsme přijali. Ozveme se vám do 24 hodin.
           </div>
@@ -741,7 +749,13 @@
   <p style="margin-top:1rem; font-size:0.75rem; opacity:0.5">© 2025 Apartmán Stenico. Všechna práva vyhrazena.</p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
+  // ── Backend URL ──
+  const API = 'https://web-trentino-apartment-production.up.railway.app';
+
+  // ── Sdílený stav dostupnosti ──
+  let obsazeneDny = [];
+
   // ── Reveal on scroll ──
   const reveals = document.querySelectorAll('.reveal');
   const obs = new IntersectionObserver((entries) => {
@@ -754,62 +768,51 @@
   }, { threshold: 0.1 });
   reveals.forEach(r => obs.observe(r));
 
-  // ── Calendar generation ──
-  const months = [
-    { name: 'Leden', days: 31, booked: [3,4,5,6,7,10,11,12,13,14,17,18,24,25,26,27,28] },
-    { name: 'Únor', days: 28, booked: [1,2,7,8,9,10,14,15,16,21,22,23] },
-    { name: 'Březen', days: 31, booked: [1,2,8,9,15,16,22,23] },
-    { name: 'Duben', days: 30, booked: [5,6,12,13,19,20,26,27] },
-    { name: 'Květen', days: 31, booked: [3,4,10,11,17,18] },
-    { name: 'Červen', days: 30, booked: [7,8,14,15,21,22,28,29] },
-    { name: 'Červenec', days: 31, booked: [1,2,3,4,5,6,7,12,13,14,19,20,21,26,27,28] },
-    { name: 'Srpen', days: 31, booked: [2,3,4,5,6,9,10,11,12,13,16,17,18,23,24,30,31] },
-    { name: 'Září', days: 30, booked: [6,7,13,14,20,21] },
-    { name: 'Říjen', days: 31, booked: [4,5,11,12,18,19,25,26] },
-    { name: 'Listopad', days: 30, booked: [1,2,8,9,15,16,22,23,29,30] },
-    { name: 'Prosinec', days: 31, booked: [6,7,13,14,20,21,22,23,24,25,26,27,28,29,30,31] },
-  ];
-  const dayNames = ['Po','Út','St','Čt','Pá','So','Ne'];
-  const grid = document.getElementById('calGrid');
-  months.forEach(m => {
-    const wrap = document.createElement('div');
-    wrap.className = 'cal-month';
-    wrap.innerHTML = `<div class="cal-month-name">${m.name}</div><div class="cal-days"></div>`;
-    const daysEl = wrap.querySelector('.cal-days');
-    dayNames.forEach(d => {
-      const h = document.createElement('div');
-      h.className = 'cal-day header'; h.textContent = d;
-      daysEl.appendChild(h);
-    });
-    for (let i = 1; i <= m.days; i++) {
-      const d = document.createElement('div');
-      d.className = 'cal-day ' + (m.booked.includes(i) ? 'booked' : 'free');
-      d.textContent = i;
-      daysEl.appendChild(d);
+  // ── Pomocné funkce pro práci s daty ──
+  function isoDatum(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function dnesISO() {
+    return isoDatum(new Date());
+  }
+  // Vrátí pole všech dní v intervalu <od, do) ve formátu YYYY-MM-DD
+  function dnyVIntervalu(od, doDatum) {
+    const dny = [];
+    let d = new Date(od);
+    const konec = new Date(doDatum);
+    while (d < konec) {
+      dny.push(isoDatum(d));
+      d.setDate(d.getDate() + 1);
     }
-    grid.appendChild(wrap);
-  });
+    return dny;
+  }
 
-  // ── Backend URL ──
-  const API = 'https://web-production-5a5e.up.railway.app';
-
-  // ── Kalendář – načtení z backendu ──
-  async function buildCalendar() {
-    let obsazeno = [];
+  // ── Načtení dostupnosti z backendu ──
+  async function nactiDostupnost() {
     try {
       const res = await fetch(`${API}/api/dostupnost`);
       const data = await res.json();
-      obsazeno = data.obsazeno || [];
+      obsazeneDny = data.obsazeno || [];
     } catch (e) {
-      console.warn('Kalendář: backend nedostupný, používám statická data.');
+      console.warn('Dostupnost: backend nedostupný.');
+      obsazeneDny = [];
     }
+  }
 
+  // ── Kalendář ──
+  function buildCalendar() {
     const year = new Date().getFullYear();
+    const yearEl = document.getElementById('calYear');
+    if (yearEl) yearEl.textContent = year;
+
     const monthNames = ['Leden','Únor','Březen','Duben','Květen','Červen',
                         'Červenec','Srpen','Září','Říjen','Listopad','Prosinec'];
     const dayNames = ['Po','Út','St','Čt','Pá','So','Ne'];
     const grid = document.getElementById('calGrid');
     grid.innerHTML = '';
+
+    const dnesMidnight = new Date();
+    dnesMidnight.setHours(0,0,0,0);
 
     for (let m = 0; m < 12; m++) {
       const daysInMonth = new Date(year, m + 1, 0).getDate();
@@ -835,19 +838,92 @@
       for (let i = 1; i <= daysInMonth; i++) {
         const dateStr = `${year}-${String(m+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
         const d = document.createElement('div');
-        const isPast = new Date(year, m, i) < new Date().setHours(0,0,0,0);
-        d.className = 'cal-day ' + (isPast ? 'booked' : obsazeno.includes(dateStr) ? 'booked' : 'free');
+        const isPast = new Date(year, m, i) < dnesMidnight;
+        const isBooked = obsazeneDny.includes(dateStr);
+        d.className = 'cal-day ' + ((isPast || isBooked) ? 'booked' : 'free');
         d.textContent = i;
         daysEl.appendChild(d);
       }
       grid.appendChild(wrap);
     }
   }
-  buildCalendar();
+
+  // ── Datepicker: nastavení min. data a ochrany pořadí ──
+  function nastavDatepicker() {
+    const odEl = document.getElementById('od');
+    const doEl = document.getElementById('do');
+    const dnes = dnesISO();
+
+    odEl.min = dnes;
+    doEl.min = dnes;
+
+    odEl.addEventListener('change', () => {
+      if (odEl.value) {
+        const minOdjezd = new Date(odEl.value);
+        minOdjezd.setDate(minOdjezd.getDate() + 1);
+        doEl.min = isoDatum(minOdjezd);
+        // Pokud byl odjezd dřív nebo stejně jako příjezd, vynuluj
+        if (doEl.value && doEl.value <= odEl.value) {
+          doEl.value = '';
+        }
+      }
+      zkontrolujTermin();
+    });
+
+    doEl.addEventListener('change', zkontrolujTermin);
+  }
+
+  // ── Kontrola, zda vybraný interval nekoliduje s obsazenými dny ──
+  function zkontrolujTermin() {
+    const odEl = document.getElementById('od');
+    const doEl = document.getElementById('do');
+    const btn = document.querySelector('.form-submit');
+    const hlaska = document.getElementById('terminWarning');
+
+    if (!odEl.value || !doEl.value) {
+      hlaska.style.display = 'none';
+      btn.disabled = false;
+      return true;
+    }
+
+    if (doEl.value <= odEl.value) {
+      hlaska.style.display = 'block';
+      hlaska.textContent = '⚠ Datum odjezdu musí být po datu příjezdu.';
+      btn.disabled = true;
+      return false;
+    }
+
+    const pozadovane = dnyVIntervalu(odEl.value, doEl.value);
+    const kolize = pozadovane.filter(d => obsazeneDny.includes(d));
+
+    if (kolize.length > 0) {
+      hlaska.style.display = 'block';
+      hlaska.textContent = '⚠ Ve zvoleném termínu jsou již obsazené dny. Zvolte prosím jiné datum.';
+      btn.disabled = true;
+      return false;
+    }
+
+    hlaska.style.display = 'none';
+    btn.disabled = false;
+    return true;
+  }
+
+  // ── Inicializace ──
+  (async function init() {
+    await nactiDostupnost();
+    buildCalendar();
+    nastavDatepicker();
+  })();
 
   // ── Form submit – napojeno na Railway backend ──
   async function submitForm(e) {
     e.preventDefault();
+
+    // Finální kontrola termínu před odesláním
+    if (!zkontrolujTermin()) {
+      return;
+    }
+
     const btn = document.querySelector('.form-submit');
     btn.textContent = 'Odesílám...';
     btn.disabled = true;
@@ -875,7 +951,9 @@
       if (res.ok) {
         document.getElementById('successMsg').style.display = 'block';
         document.getElementById('contactForm').reset();
-        buildCalendar(); // obnov kalendář
+        document.getElementById('terminWarning').style.display = 'none';
+        await nactiDostupnost();
+        buildCalendar();
       } else {
         alert('Chyba: ' + (data.detail || 'Něco se pokazilo.'));
       }
@@ -907,7 +985,6 @@
 
   function carouselMove(dir) { carouselGoTo(carouselIndex + dir); }
 
-  // Automatické přepínání každých 5 s
   setInterval(() => carouselMove(1), 5000);
 </script>
 </body>
